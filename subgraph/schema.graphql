@@ -1,45 +1,37 @@
-type CampaignCreated @entity(immutable: true) {
-  id: Bytes!
-  campaignId: BigInt! # uint256
-  campaignCreator: Bytes! # address
-  title: String! # string
-  description: String! # string
-  imageURI: String! # string
-  goal: BigInt! # uint256
-  startsAt: BigInt! # uint256
-  endsAt: BigInt! # uint256
-  status: Int! # uint8
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+type Campaign @entity {
+  id: ID!
+  campaignId: BigInt!
+  creator: Bytes!
+  address: Bytes!
+  metadata: CampaignMetadata!
+  goal: BigInt!
+  createdAt: BigInt!
+  startsAt: BigInt!
+  endsAt: BigInt!
+  status: CampaignStatus!
+  totalContributions: BigInt!
+  contributions: [Stats!]
+  refunds: [Stats!]
 }
 
-type CampaignDeleted @entity(immutable: true) {
-  id: Bytes!
-  campaignId: BigInt! # uint256
-  campaignCreator: Bytes! # address
-  status: Int! # uint8
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+type CampaignMetadata @entity {
+  id: ID!
+  title: String! 
+  description: String!
+  imageURI: String!
 }
 
-type ContributionMade @entity(immutable: true) {
-  id: Bytes!
-  campaignId: BigInt! # uint256
-  contributor: Bytes! # address
-  amount: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+type Stats @entity {
+  id: ID!
+  userAddress: Bytes!
+  amount: BigInt!
+  txnHash: Bytes!
+  type: String!
 }
 
-type RefundMade @entity(immutable: true) {
-  id: Bytes!
-  campaignId: BigInt! # uint256
-  contributor: Bytes! # address
-  amount: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+enum CampaignStatus {
+  ACTIVE,
+  DELETED,
+  SUCCESSFUL,
+  UNSUCCEEDED
 }
