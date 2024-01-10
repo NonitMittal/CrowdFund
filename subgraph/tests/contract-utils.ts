@@ -5,7 +5,7 @@ import {
   CampaignDeleted,
   ContributionMade,
   RefundMade
-} from "../generated/CrowdFund/CrowdFund"
+} from "../generated/Contract/Contract"
 
 export function createCampaignCreatedEvent(
   campaignId: BigInt,

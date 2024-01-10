@@ -1,6 +1,6 @@
 {
   "mumbai": {
-    "CrowdFund": {
+    "Contract": {
       "address": "0x7663D2F64427dc2C2c5047EAeDa6dB5F65DaF594",
       "startBlock": 44624910
     }

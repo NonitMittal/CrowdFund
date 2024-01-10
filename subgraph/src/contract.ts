@@ -3,7 +3,7 @@ import {
   CampaignDeleted as CampaignDeletedEvent,
   ContributionMade as ContributionMadeEvent,
   RefundMade as RefundMadeEvent
-} from "../generated/CrowdFund/CrowdFund"
+} from "../generated/Contract/Contract"
 import {
   CampaignCreated,
   CampaignDeleted,
