@@ -13,5 +13,5 @@ To verify smart contract on-chain
 
 ```shell
 # currently only for mumbai testnet
-npm run verify <deployed_contract_address> <token_address>
+npm run verify <deployed_contract_address>
 ```
