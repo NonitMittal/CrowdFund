@@ -156,7 +156,7 @@ contract CrowdFund {
         require(campaignId < nextId, "Campaign does not exist.");
 
         Campaign storage campaign = campaigns[campaignId];
-        require(campaign.campaignCreator == msg.sender);
+        require(campaign.campaignCreator == msg.sender, "Only the campaign creator can delete a campaign.");
         
         refund(campaignId);
         campaign.status = STATUS.DELETED;
