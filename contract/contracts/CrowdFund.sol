@@ -96,6 +96,13 @@ contract CrowdFund {
 
         require(msg.value > 0, "Contribution amount must be greater than zero.");
         require(block.timestamp < campaign.endsAt, "Campaign has ended.");
+
+        if(campaign.status == STATUS.DELETED){
+            revert("Campaign has been deleted.");
+        }
+        if(campaign.status == STATUS.SUCCESSFUL){
+            revert("Campaign was successful. Can't contribute.");
+        }
         require(campaign.status == STATUS.ACTIVE, "Campaign is not active.");
 
         uint remainingFundsNeeded = campaign.goal - campaign.totalContributions;
@@ -130,7 +137,7 @@ contract CrowdFund {
 
         require(campaign.status != STATUS.SUCCESSFUL, "Campaign was successful. Can't Withdraw.");
         require(campaign.totalContributions > 0, "Campaign has no contributions.");
-        require(block.timestamp > campaign.endsAt, "Campaign has ended. Can't Withdraw.");
+        require(block.timestamp < campaign.endsAt, "Campaign has ended. Can't Withdraw.");
 
         for (uint i = 0; i < campaign.contributors.length; i++) {
             if (campaign.contributors[i] == msg.sender) {
@@ -140,7 +147,6 @@ contract CrowdFund {
                 campaign.totalContributions -= contributionAmount;
                 payable(msg.sender).transfer(contributionAmount);
                 emit RefundMade(campaignId, msg.sender, contributionAmount);
-                break;
             }
         }
     }
