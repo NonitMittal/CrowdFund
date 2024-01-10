@@ -3,13 +3,13 @@ import {
   CampaignDeleted as CampaignDeletedEvent,
   ContributionMade as ContributionMadeEvent,
   RefundMade as RefundMadeEvent
-} from "../generated/Contract/Contract";
+} from "../generated/CrowdFund/CrowdFund";
 import { Campaign, CampaignMetadata, Stats } from "../generated/schema";
 import { BigInt } from '@graphprotocol/graph-ts'
 
 export function handleCampaignCreated(event: CampaignCreatedEvent): void {
   const id = event.params.campaignId.toHex() + event.address.toHex();
-  let campaign = new Campaign(id);
+  let campaign = Campaign.load(id);
   if(!campaign){
     campaign = new Campaign(id);
     campaign.campaignId = event.params.campaignId;
@@ -22,7 +22,7 @@ export function handleCampaignCreated(event: CampaignCreatedEvent): void {
     campaign.status = handleStatus(event.params.status as u32);
     campaign.totalContributions = BigInt.fromString("0");
 
-    let metadata = new CampaignMetadata(id);
+    let metadata = CampaignMetadata.load(id);
     if(!metadata){
       metadata = new CampaignMetadata(id);
       metadata.title = event.params.title;
@@ -37,12 +37,12 @@ export function handleCampaignCreated(event: CampaignCreatedEvent): void {
 
 export function handleContributionMade(event: ContributionMadeEvent): void {
   const id = event.params.campaignId.toHex() + event.address.toHex();
-  let campaign = new Campaign(id);
+  let campaign = Campaign.load(id);
   if(campaign){
     campaign.totalContributions = campaign.totalContributions.plus(event.params.amount);
 
     const statsId = event.params.campaignId.toHex() + event.transaction.hash.toHex();
-    let stats = new Stats(statsId);
+    let stats = Stats.load(statsId);
     if(!stats){
       stats = new Stats(statsId);
       stats.userAddress = event.params.contributor;
@@ -50,6 +50,13 @@ export function handleContributionMade(event: ContributionMadeEvent): void {
       stats.txnHash = event.transaction.hash;
       stats.type = "CONTRIBUTION";
       stats.save();
+    }
+
+    if(campaign.totalContributions >= campaign.goal && event.block.timestamp <= campaign.endsAt){
+      campaign.status = "SUCCESSFUL";
+    }
+    else if(campaign.totalContributions < campaign.goal && event.block.timestamp >= campaign.endsAt){
+      campaign.status = "UNSUCCEEDED";
     }
 
     let tempStats = campaign.contributions;
@@ -64,7 +71,7 @@ export function handleContributionMade(event: ContributionMadeEvent): void {
 
 export function handleCampaignDeleted(event: CampaignDeletedEvent): void {
   const id = event.params.campaignId.toHex() + event.address.toHex();
-  let campaign = new Campaign(id);
+  let campaign = Campaign.load(id);
   if(campaign){
     campaign.status = handleStatus(event.params.status as u32);
     campaign.save();
@@ -74,12 +81,12 @@ export function handleCampaignDeleted(event: CampaignDeletedEvent): void {
 
 export function handleRefundMade(event: RefundMadeEvent): void {
   const id = event.params.campaignId.toHex() + event.address.toHex();
-  let campaign = new Campaign(id);
+  let campaign = Campaign.load(id);
   if(campaign){
     campaign.totalContributions = campaign.totalContributions.minus(event.params.amount);
 
     const statsId = event.params.campaignId.toHex() + event.transaction.hash.toHex();
-    let stats = new Stats(statsId);
+    let stats = Stats.load(statsId);
     if(!stats){
       stats = new Stats(statsId);
       stats.userAddress = event.params.contributor;
