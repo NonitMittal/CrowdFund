@@ -4,11 +4,9 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ crowdfund",
-    "create-local": "graph create --node http://localhost:8020/ crowdfund",
-    "remove-local": "graph remove --node http://localhost:8020/ crowdfund",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 crowdfund",
-    "test": "graph test"
+    "prepare": "graph codegen && graph build",
+    "auth": "graph auth --studio",
+    "deploy": "graph deploy --studio crowdfund"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.63.0",
