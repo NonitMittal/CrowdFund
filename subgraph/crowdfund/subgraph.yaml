@@ -1,0 +1,33 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: CrowdFund
+    network: mumbai
+    source:
+      address: "0x7663D2F64427dc2C2c5047EAeDa6dB5F65DaF594"
+      abi: CrowdFund
+      startBlock: 44624910
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - CampaignCreated
+        - CampaignDeleted
+        - ContributionMade
+        - RefundMade
+      abis:
+        - name: CrowdFund
+          file: ./abis/CrowdFund.json
+      eventHandlers:
+        - event: CampaignCreated(indexed uint256,address,string,string,string,uint256,uint256,uint256,uint8)
+          handler: handleCampaignCreated
+        - event: CampaignDeleted(indexed uint256,address,uint8)
+          handler: handleCampaignDeleted
+        - event: ContributionMade(indexed uint256,address,uint256)
+          handler: handleContributionMade
+        - event: RefundMade(indexed uint256,address,uint256)
+          handler: handleRefundMade
+      file: ./src/crowd-fund.ts
