@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 contract CrowdFund {
     //VARIABLES----------------------------------------------------------------
-    uint private nextId = 1;
+    uint private nextId = 0;
     Campaign[] public campaigns;
 
     //STRUCTS------------------------------------------------------------------
@@ -90,7 +90,7 @@ contract CrowdFund {
 
     // Function to allow contributors to contribute funds to a campaign
     function contribute(uint campaignId) public payable {
-        require(campaignId > 0 && campaignId < nextId, "Campaign does not exist.");
+        require(campaignId < nextId, "Campaign does not exist.");
 
         Campaign storage campaign = campaigns[campaignId];
 
@@ -124,7 +124,7 @@ contract CrowdFund {
 
     // Function to allow contributors to withdraw their contributions
     function withdrawContribution(uint campaignId) public {
-        require(campaignId > 0 && campaignId < nextId, "Campaign does not exist.");
+        require(campaignId < nextId, "Campaign does not exist.");
 
         Campaign storage campaign = campaigns[campaignId];
 
@@ -147,7 +147,7 @@ contract CrowdFund {
 
     // Function to allow the campaign creator to delete a campaign
     function deleteCampaign(uint campaignId) public {
-        require(campaignId > 0 && campaignId < nextId, "Campaign does not exist.");
+        require(campaignId < nextId, "Campaign does not exist.");
 
         Campaign storage campaign = campaigns[campaignId];
         require(campaign.campaignCreator == msg.sender);
